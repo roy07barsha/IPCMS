@@ -1,0 +1,143 @@
+{% extends 'hospital/base.html' %}
+
+{% block title %}
+Generate Prescription - IPCMS
+{% endblock %}
+
+{% block header %}
+Generate Prescription
+{% endblock %}
+
+{% block content %}
+
+<div class="form-container">
+
+    <h2>Generate New Prescription</h2>
+
+    <p class="description">
+        Enter the medication details for the patient.
+    </p>
+
+    <form method="POST">
+
+        {% csrf_token %}
+
+        <label>Patient</label>
+
+        <select name="patient" required>
+            <option value="">Select Patient</option>
+
+            {% for patient in patients %}
+                <option value="{{ patient.id }}">
+                    {{ patient.patient_id }} - {{ patient.name }}
+                </option>
+            {% endfor %}
+        </select>
+
+
+        <label>Doctor</label>
+
+        <select name="doctor" required>
+            <option value="">Select Doctor</option>
+
+            {% for doctor in doctors %}
+                <option value="{{ doctor.id }}">
+                    {{ doctor }}
+                </option>
+            {% endfor %}
+        </select>
+
+
+        <label>Medicine</label>
+
+        <input
+            type="text"
+            name="medicine"
+            placeholder="Enter medicine name"
+            required
+        >
+
+
+        <label>Dosage</label>
+
+        <input
+            type="text"
+            name="dosage"
+            placeholder="Example: 1 tablet twice daily"
+            required
+        >
+
+
+        <label>Duration</label>
+
+        <input
+            type="text"
+            name="duration"
+            placeholder="Example: 5 days"
+            required
+        >
+
+
+        <button type="submit" class="btn">
+            Save Prescription
+        </button>
+
+        <a href="{% url 'prescription_list' %}" class="cancel-btn">
+            Cancel
+        </a>
+
+    </form>
+
+</div>
+
+
+<style>
+
+.form-container {
+    max-width: 700px;
+    background: white;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.06);
+}
+
+.form-container h2 {
+    margin-bottom: 8px;
+}
+
+.description {
+    color: #607d8b;
+    margin-bottom: 25px;
+}
+
+.form-container label {
+    display: block;
+    font-weight: bold;
+    margin-top: 15px;
+    margin-bottom: 6px;
+}
+
+.form-container select,
+.form-container input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+.btn {
+    margin-top: 20px;
+}
+
+.cancel-btn {
+    display: inline-block;
+    margin-left: 10px;
+    padding: 10px 18px;
+    color: #555;
+    text-decoration: none;
+}
+
+</style>
+
+{% endblock %}

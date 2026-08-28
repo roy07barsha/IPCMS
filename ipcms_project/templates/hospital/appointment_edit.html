@@ -1,0 +1,146 @@
+{% extends 'hospital/base.html' %}
+
+{% block title %}
+Edit Appointment - IPCMS
+{% endblock %}
+
+{% block header %}
+Edit Appointment
+{% endblock %}
+
+{% block content %}
+
+<div class="form-container">
+
+    <h2>Edit Appointment</h2>
+
+    <p class="description">
+        Update the appointment details below.
+    </p>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <label>Patient</label>
+        <select name="patient" required>
+            {% for patient in patients %}
+                <option value="{{ patient.id }}"
+                    {% if patient.id == appointment.patient.id %}selected{% endif %}>
+                    {{ patient.name }}
+                </option>
+            {% endfor %}
+        </select>
+
+        <label>Doctor</label>
+        <select name="doctor" required>
+            {% for doctor in doctors %}
+                <option value="{{ doctor.id }}"
+                    {% if doctor.id == appointment.doctor.id %}selected{% endif %}>
+                    {{ doctor }}
+                </option>
+            {% endfor %}
+        </select>
+
+        <label>Appointment Date</label>
+        <input
+            type="date"
+            name="appointment_date"
+            value="{{ appointment.appointment_date|date:'Y-m-d' }}"
+            required
+        >
+
+        <label>Appointment Time</label>
+        <input
+            type="time"
+            name="appointment_time"
+            value="{{ appointment.appointment_time|time:'H:i' }}"
+            required
+        >
+
+        <label>Status</label>
+        <select name="status" required>
+            <option value="Scheduled"
+                {% if appointment.status == "Scheduled" %}selected{% endif %}>
+                Scheduled
+            </option>
+
+            <option value="Completed"
+                {% if appointment.status == "Completed" %}selected{% endif %}>
+                Completed
+            </option>
+
+            <option value="Cancelled"
+                {% if appointment.status == "Cancelled" %}selected{% endif %}>
+                Cancelled
+            </option>
+        </select>
+
+        <button type="submit" class="btn">
+            Save Changes
+        </button>
+
+        <a href="{% url 'appointment_list' %}" class="cancel-btn">
+            Cancel
+        </a>
+
+    </form>
+
+</div>
+
+<style>
+
+.form-container {
+    max-width: 700px;
+    background: white;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+}
+
+.form-container h2 {
+    margin-bottom: 8px;
+}
+
+.description {
+    color: #607d8b;
+    margin-bottom: 25px;
+}
+
+.form-container label {
+    display: block;
+    font-weight: bold;
+    margin-top: 15px;
+    margin-bottom: 6px;
+}
+
+.form-container input,
+.form-container select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    box-sizing: border-box;
+}
+
+.btn {
+    display: inline-block;
+    margin-top: 22px;
+    background: #1976d2;
+    color: white;
+    border: none;
+    padding: 11px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.cancel-btn {
+    display: inline-block;
+    margin-left: 10px;
+    padding: 11px 18px;
+    color: #555;
+    text-decoration: none;
+}
+
+</style>
+
+{% endblock %}

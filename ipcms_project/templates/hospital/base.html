@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{% block title %}IPCMS{% endblock %}</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f7fb;
+            color: #263238;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 230px;
+            height: 100vh;
+            background-color: #1976d2;
+            color: white;
+            padding: 25px 15px;
+        }
+
+        .sidebar h2 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .sidebar a {
+            display: block;
+            color: white;
+            text-decoration: none;
+            padding: 12px 15px;
+            margin-bottom: 8px;
+            border-radius: 6px;
+        }
+
+        .sidebar a:hover {
+            background-color: #1565c0;
+        }
+
+        /* Main content */
+        .main {
+            margin-left: 230px;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            background-color: white;
+            padding: 20px 30px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .header h1 {
+            font-size: 24px;
+        }
+
+        /* Page content */
+        .content {
+            padding: 30px;
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-block;
+            background-color: #1976d2;
+            color: white;
+            padding: 10px 18px;
+            border: none;
+            border-radius: 6px;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background-color: #1565c0;
+        }
+
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: white;
+            margin-top: 20px;
+        }
+
+        th,
+        td {
+            padding: 14px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        th {
+            background-color: #f5f7fa;
+        }
+
+        /* Forms */
+        .form-container {
+            background-color: white;
+            padding: 25px;
+            border-radius: 10px;
+            max-width: 700px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.06);
+        }
+
+        .form-container input,
+        .form-container select,
+        .form-container textarea {
+            width: 100%;
+            padding: 10px;
+            margin-top: 6px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        /* Mobile */
+        @media (max-width: 700px) {
+            .sidebar {
+                width: 180px;
+            }
+
+            .main {
+                margin-left: 180px;
+            }
+
+            .content {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <aside class="sidebar">
+
+        <h2>IPCMS</h2>
+
+        <a href="/dashboard/">Dashboard</a>
+
+        <a href="{% url 'patient_list' %}">Patients</a>
+
+        <a href="{% url 'doctor_list' %}">Doctors</a>
+
+        <a href="{% url 'appointment_list' %}">Appointments</a>
+
+        <a href="{% url 'consultation_list' %}">Consultations</a>
+
+        <a href="{% url 'prescription_list' %}">Prescriptions</a>
+
+    </aside>
+
+
+    <div class="main">
+
+        <header class="header">
+            <h1>{% block header %}IPCMS Dashboard{% endblock %}</h1>
+        </header>
+
+        <main class="content">
+
+            {% block content %}
+            {% endblock %}
+
+        </main>
+
+    </div>
+
+</body>
+</html>

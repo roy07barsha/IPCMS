@@ -1,0 +1,136 @@
+{% extends 'hospital/base.html' %}
+
+{% block title %}
+Edit Prescription - IPCMS
+{% endblock %}
+
+{% block header %}
+Edit Prescription
+{% endblock %}
+
+{% block content %}
+
+<div class="form-container">
+
+    <h2>Edit Prescription</h2>
+
+    <p class="description">
+        Update the prescription details below.
+    </p>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <label>Patient</label>
+        <select name="patient" required>
+            {% for patient in patients %}
+                <option value="{{ patient.id }}"
+                    {% if patient.id == prescription.patient.id %}selected{% endif %}>
+                    {{ patient.name }}
+                </option>
+            {% endfor %}
+        </select>
+
+        <label>Doctor</label>
+        <select name="doctor" required>
+            {% for doctor in doctors %}
+                <option value="{{ doctor.id }}"
+                    {% if doctor.id == prescription.doctor.id %}selected{% endif %}>
+                    {{ doctor }}
+                </option>
+            {% endfor %}
+        </select>
+
+        <label>Medicine</label>
+        <input
+            type="text"
+            name="medicine"
+            value="{{ prescription.medicine }}"
+            required
+        >
+
+        <label>Dosage</label>
+        <input
+            type="text"
+            name="dosage"
+            value="{{ prescription.dosage }}"
+            required
+        >
+
+        <label>Duration</label>
+        <input
+            type="text"
+            name="duration"
+            value="{{ prescription.duration }}"
+            required
+        >
+
+        <button type="submit" class="btn">
+            Save Changes
+        </button>
+
+        <a href="{% url 'prescription_list' %}" class="cancel-btn">
+            Cancel
+        </a>
+
+    </form>
+
+</div>
+
+<style>
+
+.form-container {
+    max-width: 700px;
+    background: white;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+}
+
+.form-container h2 {
+    margin-bottom: 8px;
+}
+
+.description {
+    color: #607d8b;
+    margin-bottom: 25px;
+}
+
+.form-container label {
+    display: block;
+    font-weight: bold;
+    margin-top: 15px;
+    margin-bottom: 6px;
+}
+
+.form-container input,
+.form-container select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    box-sizing: border-box;
+}
+
+.btn {
+    display: inline-block;
+    margin-top: 22px;
+    background: #1976d2;
+    color: white;
+    border: none;
+    padding: 11px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.cancel-btn {
+    display: inline-block;
+    margin-left: 10px;
+    padding: 11px 18px;
+    color: #555;
+    text-decoration: none;
+}
+
+</style>
+
+{% endblock %}

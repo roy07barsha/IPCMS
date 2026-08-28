@@ -1,0 +1,115 @@
+{% extends 'hospital/base.html' %}
+
+{% block title %}
+Appointments - IPCMS
+{% endblock %}
+
+{% block header %}
+Appointments
+{% endblock %}
+
+{% block content %}
+
+<div class="page-heading">
+
+    <div>
+        <h2>Appointment Management</h2>
+        <p>View and manage patient appointments.</p>
+    </div>
+
+    <a href="{% url 'add_appointment' %}" class="btn">
+        + Book Appointment
+    </a>
+
+</div>
+
+
+<div class="table-container">
+
+    <table>
+
+        <thead>
+            <tr>
+                <th>Patient</th>
+                <th>Doctor</th>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+
+        <tbody>
+
+            {% for appointment in appointments %}
+
+            <tr>
+                <td>{{ appointment.patient.name }}</td>
+                <td>{{ appointment.doctor }}</td>
+                <td>{{ appointment.appointment_date }}</td>
+                <td>{{ appointment.appointment_time }}</td>
+                <td>{{ appointment.status }}</td>
+                <td>
+                    <a href="{% url 'edit_appointment' appointment.id %}">
+                        Edit
+                    </a>
+                    <a href="{% url 'delete_appointment' appointment.id %}">
+                        Delete
+                    </a>
+                </td>
+            </tr>
+
+            {% empty %}
+
+            <tr>
+                <td colspan="5" style="text-align: center;">
+                    No appointments found.
+                </td>
+            </tr>
+
+            {% endfor %}
+
+        </tbody>
+
+    </table>
+
+</div>
+
+
+<style>
+
+    .page-heading {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
+    }
+
+    .page-heading h2 {
+        font-size: 24px;
+        margin-bottom: 6px;
+    }
+
+    .page-heading p {
+        color: #607d8b;
+    }
+
+    .table-container {
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.06);
+        overflow-x: auto;
+    }
+
+    @media (max-width: 700px) {
+        .page-heading {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 15px;
+        }
+    }
+
+</style>
+
+{% endblock %}

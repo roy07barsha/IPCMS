@@ -1,0 +1,99 @@
+{% extends 'hospital/base.html' %}
+
+{% block title %}
+Edit Patient - IPCMS
+{% endblock %}
+
+{% block header %}
+Edit Patient
+{% endblock %}
+
+{% block content %}
+
+<div class="form-container">
+
+    <h2>Edit Patient</h2>
+
+    <p class="description">
+        Update the patient's information.
+    </p>
+
+    <form method="POST">
+
+        {% csrf_token %}
+
+        {{ form.as_p }}
+
+        <button type="submit" class="btn">
+            Save Changes
+        </button>
+
+        <a href="{% url 'patient_list' %}" class="cancel-btn">
+            Cancel
+        </a>
+
+    </form>
+
+</div>
+
+<style>
+
+.form-container {
+    max-width: 700px;
+    background: white;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+}
+
+.form-container h2 {
+    margin-bottom: 8px;
+}
+
+.description {
+    color: #607d8b;
+    margin-bottom: 25px;
+}
+
+.form-container p {
+    margin-bottom: 15px;
+}
+
+.form-container label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 6px;
+}
+
+.form-container input,
+.form-container select,
+.form-container textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    box-sizing: border-box;
+}
+
+.btn {
+    display: inline-block;
+    margin-top: 15px;
+    background: #1976d2;
+    color: white;
+    border: none;
+    padding: 11px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.cancel-btn {
+    display: inline-block;
+    margin-left: 10px;
+    padding: 11px 18px;
+    color: #555;
+    text-decoration: none;
+}
+
+</style>
+
+{% endblock %}

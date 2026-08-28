@@ -1,0 +1,123 @@
+{% extends 'hospital/base.html' %}
+
+{% block title %}
+Edit Doctor - IPCMS
+{% endblock %}
+
+{% block header %}
+Edit Doctor
+{% endblock %}
+
+{% block content %}
+
+<div class="form-container">
+
+    <h2>Edit Doctor</h2>
+
+    <p class="description">
+        Update the doctor's professional details.
+    </p>
+
+    <form method="POST">
+
+        {% csrf_token %}
+
+        <label>Doctor</label>
+
+        <input
+            type="text"
+            value="{{ doctor.user.get_full_name|default:doctor.user.username }}"
+            disabled
+        >
+
+        <label>Specialization</label>
+
+        <input
+            type="text"
+            name="specialization"
+            value="{{ doctor.specialization }}"
+            required
+        >
+
+        <label>Phone</label>
+
+        <input
+            type="text"
+            name="phone"
+            value="{{ doctor.phone }}"
+            maxlength="15"
+            required
+        >
+
+        <button type="submit" class="btn">
+            Save Changes
+        </button>
+
+        <a href="{% url 'doctor_list' %}" class="cancel-btn">
+            Cancel
+        </a>
+
+    </form>
+
+</div>
+
+<style>
+
+.form-container {
+    max-width: 650px;
+    background: white;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+}
+
+.form-container h2 {
+    margin-bottom: 8px;
+}
+
+.description {
+    color: #607d8b;
+    margin-bottom: 25px;
+}
+
+.form-container label {
+    display: block;
+    font-weight: bold;
+    margin-top: 15px;
+    margin-bottom: 6px;
+}
+
+.form-container input {
+    width: 100%;
+    padding: 11px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    box-sizing: border-box;
+}
+
+.form-container input:disabled {
+    background: #f1f5f9;
+}
+
+.btn {
+    display: inline-block;
+    margin-top: 22px;
+    background: #1976d2;
+    color: white;
+    border: none;
+    padding: 11px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.cancel-btn {
+    display: inline-block;
+    margin-left: 10px;
+    padding: 11px 18px;
+    color: #555;
+    text-decoration: none;
+}
+
+</style>
+
+{% endblock %}

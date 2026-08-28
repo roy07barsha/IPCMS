@@ -1,0 +1,72 @@
+{% extends 'hospital/base.html' %}
+
+{% block title %}
+Delete Doctor - IPCMS
+{% endblock %}
+
+{% block header %}
+Delete Doctor
+{% endblock %}
+
+{% block content %}
+
+<div class="delete-card">
+
+    <h2>Delete Doctor</h2>
+
+    <p>
+        Are you sure you want to delete 
+        <strong>{{ doctor.user.get_full_name|default:doctor.user.username }}</strong>?
+    </p>
+
+    <p class="warning">
+        <br>This action cannot be undone.<br>
+    </p>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <button type="submit" class="delete-btn">
+            Yes, Delete
+        </button>
+
+        <a href="{% url 'doctor_list' %}" class="cancel-btn">
+            Cancel
+        </a>
+    </form>
+
+</div>
+
+<style>
+
+.delete-card {
+    max-width: 550px;
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+}
+
+.warning {
+    color: #c62828;
+    font-weight: bold;
+}
+
+.delete-btn {
+    background: #d32f2f;
+    color: white;
+    border: none;
+    padding: 11px 18px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.cancel-btn {
+    margin-left: 10px;
+    color: #555;
+    text-decoration: none;
+}
+
+</style>
+
+{% endblock %}
