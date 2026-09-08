@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.models import User
 from .models import AuditLog
@@ -19,12 +20,16 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
 
-from .serializers import PatientSerializer
+from .serializers import (
+    PatientSerializer,
+    DoctorSerializer,
+    AppointmentSerializer,
+    ConsultationSerializer,
+    PrescriptionSerializer,
+)
 
 
-# ============================================================
 # DASHBOARD
-# ============================================================
 
 @login_required
 def dashboard(request):
@@ -112,6 +117,7 @@ def add_patient(request):
                 'Patient',
                 patient.id
             )
+            messages.success( request, "Patient added successfully." )
 
             return redirect('patient_list')
 
@@ -151,6 +157,11 @@ def edit_patient(request, patient_id):
                 'Patient',
                 patient.id
             )
+            messages.success(
+                request,
+                "Patient updated successfully."
+            )
+
 
             return redirect('patient_list')
 
@@ -191,6 +202,11 @@ def delete_patient(request, patient_id):
             patient_id_value
         )
 
+        messages.success(
+            request,
+            "Patient deleted successfully."
+        )
+
         return redirect('patient_list')
 
     return render(
@@ -202,9 +218,7 @@ def delete_patient(request, patient_id):
     )
 
 
-# ============================================================
 # APPOINTMENT CRUD
-# ============================================================
 
 @login_required
 @permission_required(
@@ -253,6 +267,11 @@ def add_appointment(request):
             'Created',
             'Appointment',
             appointment.id
+        )
+
+        messages.success(
+            request,
+            "Appointment added successfully."
         )
 
         return redirect('appointment_list')
@@ -312,6 +331,11 @@ def edit_appointment(request, appointment_id):
             appointment.id
         )
 
+        messages.success(
+            request,
+            "Appointment updated successfully."
+        )
+
         return redirect('appointment_list')
 
     patients = Patient.objects.all()
@@ -352,6 +376,11 @@ def delete_appointment(request, appointment_id):
             appointment_id_value
         )
 
+        messages.success(
+            request,
+            "Appointment deleted successfully."
+        )
+
         return redirect('appointment_list')
 
     return render(
@@ -363,9 +392,7 @@ def delete_appointment(request, appointment_id):
     )
 
 
-# ============================================================
 # CONSULTATION CRUD
-# ============================================================
 
 @login_required
 @permission_required(
@@ -413,6 +440,11 @@ def add_consultation(request):
             'Created',
             'Consultation',
             consultation.id
+        )
+
+        messages.success(
+            request,
+            "Consultation added successfully."
         )
 
         return redirect('consultation_list')
@@ -473,6 +505,11 @@ def edit_consultation(request, consultation_id):
             consultation.id
         )
 
+        messages.success(
+            request,
+            "Consultation updated successfully."
+        )
+
         return redirect('consultation_list')
 
     patients = Patient.objects.all()
@@ -513,6 +550,11 @@ def delete_consultation(request, consultation_id):
             consultation_id_value
         )
 
+        messages.success(
+            request,
+            "Consultation deleted successfully."
+        )
+
         return redirect('consultation_list')
 
     return render(
@@ -524,9 +566,7 @@ def delete_consultation(request, consultation_id):
     )
 
 
-# ============================================================
 # PRESCRIPTION CRUD
-# ============================================================
 
 @login_required
 @permission_required(
@@ -574,6 +614,11 @@ def add_prescription(request):
             'Created',
             'Prescription',
             prescription.id
+        )
+
+        messages.success(
+            request,
+            "Prescription added successfully."
         )
 
         return redirect('prescription_list')
@@ -633,6 +678,11 @@ def edit_prescription(request, prescription_id):
             prescription.id
         )
 
+        messages.success(
+            request,
+            "Prescription updated successfully."
+        )
+
         return redirect('prescription_list')
 
     patients = Patient.objects.all()
@@ -673,6 +723,11 @@ def delete_prescription(request, prescription_id):
             prescription_id_value
         )
 
+        messages.success(
+            request,
+            "Prescription deleted successfully."
+        )
+
         return redirect('prescription_list')
 
     return render(
@@ -684,9 +739,7 @@ def delete_prescription(request, prescription_id):
     )
 
 
-# ============================================================
 # DOCTOR CRUD
-# ============================================================
 
 @login_required
 @permission_required(
@@ -732,6 +785,11 @@ def add_doctor(request):
             doctor.id
         )
 
+        messages.success(
+            request,
+            "Doctor added successfully."
+        )
+
         return redirect('doctor_list')
 
     users = User.objects.all()
@@ -775,6 +833,11 @@ def edit_doctor(request, doctor_id):
             doctor.id
         )
 
+        messages.success(
+            request,
+            "Doctor updated successfully."
+        )
+
         return redirect('doctor_list')
 
     return render(
@@ -810,6 +873,11 @@ def delete_doctor(request, doctor_id):
             doctor_id_value
         )
 
+        messages.success(
+            request,
+            "Doctor deleted successfully."
+        )
+
         return redirect('doctor_list')
 
     return render(
@@ -821,9 +889,8 @@ def delete_doctor(request, doctor_id):
     )
 
 
-# ============================================================
 # REST API - PATIENT
-# ============================================================
+
 
 @api_view(['GET', 'POST'])
 @permission_classes([IsAuthenticated])
@@ -892,9 +959,8 @@ def patient_api(request):
         )
 
 
-# ============================================================
 # REST API - PATIENT DETAIL
-# ============================================================
+
 
 @api_view(['GET', 'PUT', 'DELETE'])
 @permission_classes([IsAuthenticated])
@@ -1006,9 +1072,9 @@ def patient_api_detail(request, patient_id):
         )
 
 
-# ============================================================
+
 # AUDIT LOG HELPER
-# ============================================================
+
 
 def create_audit_log(user, action, model_name, object_id):
 
@@ -1018,3 +1084,839 @@ def create_audit_log(user, action, model_name, object_id):
         model_name=model_name,
         object_id=str(object_id)
     )
+
+
+def api_has_permission(user, permission):
+    """
+    Check whether the authenticated user has the required
+    Django permission.
+    """
+    return user.is_superuser or user.has_perm(permission)
+
+
+
+# PATIENT API
+
+
+@api_view(["GET", "POST"])
+@permission_classes([IsAuthenticated])
+def patient_api(request):
+
+    if request.method == "GET":
+
+        if not api_has_permission(
+            request.user,
+            "hospital.view_patient"
+        ):
+            return Response(
+                {"error": "Permission denied."},
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+        patients = Patient.objects.all().order_by("id")
+
+        serializer = PatientSerializer(
+            patients,
+            many=True
+        )
+
+        return Response(serializer.data)
+
+    if request.method == "POST":
+
+        if not api_has_permission(
+            request.user,
+            "hospital.add_patient"
+        ):
+            return Response(
+                {"error": "Permission denied."},
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+        serializer = PatientSerializer(
+            data=request.data
+        )
+
+        if serializer.is_valid():
+
+            patient = serializer.save()
+
+            create_audit_log(
+                request.user,
+                "API CREATE",
+                "Patient",
+                patient.id
+            )
+
+            return Response(
+                serializer.data,
+                status=status.HTTP_201_CREATED
+            )
+
+        return Response(
+            serializer.errors,
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+
+@api_view(["GET", "PUT", "DELETE"])
+@permission_classes([IsAuthenticated])
+def patient_api_detail(request, patient_id):
+
+    try:
+        patient = Patient.objects.get(
+            id=patient_id
+        )
+
+    except Patient.DoesNotExist:
+
+        return Response(
+            {"error": "Patient not found."},
+            status=status.HTTP_404_NOT_FOUND
+        )
+
+
+    if request.method == "GET":
+
+        if not api_has_permission(
+            request.user,
+            "hospital.view_patient"
+        ):
+            return Response(
+                {"error": "Permission denied."},
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+        serializer = PatientSerializer(patient)
+
+        return Response(serializer.data)
+
+    
+
+    if request.method == "PUT":
+
+        if not api_has_permission(
+            request.user,
+            "hospital.change_patient"
+        ):
+            return Response(
+                {"error": "Permission denied."},
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+        serializer = PatientSerializer(
+            patient,
+            data=request.data
+        )
+
+        if serializer.is_valid():
+
+            serializer.save()
+
+            create_audit_log(
+                request.user,
+                "API UPDATE",
+                "Patient",
+                patient.id
+            )
+
+            return Response(
+                serializer.data
+            )
+
+        return Response(
+            serializer.errors,
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    
+
+    if request.method == "DELETE":
+
+        if not api_has_permission(
+            request.user,
+            "hospital.delete_patient"
+        ):
+            return Response(
+                {"error": "Permission denied."},
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+        patient_id_value = patient.id
+
+        patient.delete()
+
+        create_audit_log(
+            request.user,
+            "API DELETE",
+            "Patient",
+            patient_id_value
+        )
+
+        return Response(
+            status=status.HTTP_204_NO_CONTENT
+        )
+
+
+
+# DOCTOR API
+
+
+@api_view(["GET", "POST"])
+@permission_classes([IsAuthenticated])
+def doctor_api(request):
+
+    if request.method == "GET":
+
+        if not api_has_permission(
+            request.user,
+            "hospital.view_doctor"
+        ):
+            return Response(
+                {"error": "Permission denied."},
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+        doctors = Doctor.objects.select_related(
+            "user"
+        ).all().order_by("id")
+
+        serializer = DoctorSerializer(
+            doctors,
+            many=True
+        )
+
+        return Response(serializer.data)
+
+    if request.method == "POST":
+
+        if not api_has_permission(
+            request.user,
+            "hospital.add_doctor"
+        ):
+            return Response(
+                {"error": "Permission denied."},
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+        serializer = DoctorSerializer(
+            data=request.data
+        )
+
+        if serializer.is_valid():
+
+            doctor = serializer.save()
+
+            create_audit_log(
+                request.user,
+                "API CREATE",
+                "Doctor",
+                doctor.id
+            )
+
+            return Response(
+                serializer.data,
+                status=status.HTTP_201_CREATED
+            )
+
+        return Response(
+            serializer.errors,
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+
+@api_view(["GET", "PUT", "DELETE"])
+@permission_classes([IsAuthenticated])
+def doctor_api_detail(request, doctor_id):
+
+    try:
+        doctor = Doctor.objects.get(
+            id=doctor_id
+        )
+
+    except Doctor.DoesNotExist:
+
+        return Response(
+            {"error": "Doctor not found."},
+            status=status.HTTP_404_NOT_FOUND
+        )
+
+    if request.method == "GET":
+
+        if not api_has_permission(
+            request.user,
+            "hospital.view_doctor"
+        ):
+            return Response(
+                {"error": "Permission denied."},
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+        serializer = DoctorSerializer(doctor)
+
+        return Response(serializer.data)
+
+    if request.method == "PUT":
+
+        if not api_has_permission(
+            request.user,
+            "hospital.change_doctor"
+        ):
+            return Response(
+                {"error": "Permission denied."},
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+        serializer = DoctorSerializer(
+            doctor,
+            data=request.data
+        )
+
+        if serializer.is_valid():
+
+            serializer.save()
+
+            create_audit_log(
+                request.user,
+                "API UPDATE",
+                "Doctor",
+                doctor.id
+            )
+
+            return Response(
+                serializer.data
+            )
+
+        return Response(
+            serializer.errors,
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    if request.method == "DELETE":
+
+        if not api_has_permission(
+            request.user,
+            "hospital.delete_doctor"
+        ):
+            return Response(
+                {"error": "Permission denied."},
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+        doctor_id_value = doctor.id
+
+        doctor.delete()
+
+        create_audit_log(
+            request.user,
+            "API DELETE",
+            "Doctor",
+            doctor_id_value
+        )
+
+        return Response(
+            status=status.HTTP_204_NO_CONTENT
+        )
+
+
+# APPOINTMENT API
+
+
+@api_view(["GET", "POST"])
+@permission_classes([IsAuthenticated])
+def appointment_api(request):
+
+    if request.method == "GET":
+
+        if not api_has_permission(
+            request.user,
+            "hospital.view_appointment"
+        ):
+            return Response(
+                {"error": "Permission denied."},
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+        appointments = Appointment.objects.select_related(
+            "patient",
+            "doctor"
+        ).all().order_by(
+            "appointment_date",
+            "appointment_time"
+        )
+
+        serializer = AppointmentSerializer(
+            appointments,
+            many=True
+        )
+
+        return Response(serializer.data)
+
+    if request.method == "POST":
+
+        if not api_has_permission(
+            request.user,
+            "hospital.add_appointment"
+        ):
+            return Response(
+                {"error": "Permission denied."},
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+        serializer = AppointmentSerializer(
+            data=request.data
+        )
+
+        if serializer.is_valid():
+
+            appointment = serializer.save()
+
+            create_audit_log(
+                request.user,
+                "API CREATE",
+                "Appointment",
+                appointment.id
+            )
+
+            return Response(
+                serializer.data,
+                status=status.HTTP_201_CREATED
+            )
+
+        return Response(
+            serializer.errors,
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+
+@api_view(["GET", "PUT", "DELETE"])
+@permission_classes([IsAuthenticated])
+def appointment_api_detail(
+    request,
+    appointment_id
+):
+
+    try:
+        appointment = Appointment.objects.get(
+            id=appointment_id
+        )
+
+    except Appointment.DoesNotExist:
+
+        return Response(
+            {"error": "Appointment not found."},
+            status=status.HTTP_404_NOT_FOUND
+        )
+
+    if request.method == "GET":
+
+        if not api_has_permission(
+            request.user,
+            "hospital.view_appointment"
+        ):
+            return Response(
+                {"error": "Permission denied."},
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+        serializer = AppointmentSerializer(
+            appointment
+        )
+
+        return Response(serializer.data)
+
+    if request.method == "PUT":
+
+        if not api_has_permission(
+            request.user,
+            "hospital.change_appointment"
+        ):
+            return Response(
+                {"error": "Permission denied."},
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+        serializer = AppointmentSerializer(
+            appointment,
+            data=request.data
+        )
+
+        if serializer.is_valid():
+
+            serializer.save()
+
+            create_audit_log(
+                request.user,
+                "API UPDATE",
+                "Appointment",
+                appointment.id
+            )
+
+            return Response(
+                serializer.data
+            )
+
+        return Response(
+            serializer.errors,
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    if request.method == "DELETE":
+
+        if not api_has_permission(
+            request.user,
+            "hospital.delete_appointment"
+        ):
+            return Response(
+                {"error": "Permission denied."},
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+        appointment_id_value = appointment.id
+
+        appointment.delete()
+
+        create_audit_log(
+            request.user,
+            "API DELETE",
+            "Appointment",
+            appointment_id_value
+        )
+
+        return Response(
+            status=status.HTTP_204_NO_CONTENT
+        )
+
+
+
+# CONSULTATION API
+
+
+@api_view(["GET", "POST"])
+@permission_classes([IsAuthenticated])
+def consultation_api(request):
+
+    if request.method == "GET":
+
+        if not api_has_permission(
+            request.user,
+            "hospital.view_consultation"
+        ):
+            return Response(
+                {"error": "Permission denied."},
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+        consultations = Consultation.objects.select_related(
+            "patient",
+            "doctor"
+        ).all().order_by("id")
+
+        serializer = ConsultationSerializer(
+            consultations,
+            many=True
+        )
+
+        return Response(serializer.data)
+
+    if request.method == "POST":
+
+        if not api_has_permission(
+            request.user,
+            "hospital.add_consultation"
+        ):
+            return Response(
+                {"error": "Permission denied."},
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+        serializer = ConsultationSerializer(
+            data=request.data
+        )
+
+        if serializer.is_valid():
+
+            consultation = serializer.save()
+
+            create_audit_log(
+                request.user,
+                "API CREATE",
+                "Consultation",
+                consultation.id
+            )
+
+            return Response(
+                serializer.data,
+                status=status.HTTP_201_CREATED
+            )
+
+        return Response(
+            serializer.errors,
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+
+@api_view(["GET", "PUT", "DELETE"])
+@permission_classes([IsAuthenticated])
+def consultation_api_detail(
+    request,
+    consultation_id
+):
+
+    try:
+        consultation = Consultation.objects.get(
+            id=consultation_id
+        )
+
+    except Consultation.DoesNotExist:
+
+        return Response(
+            {"error": "Consultation not found."},
+            status=status.HTTP_404_NOT_FOUND
+        )
+
+    if request.method == "GET":
+
+        if not api_has_permission(
+            request.user,
+            "hospital.view_consultation"
+        ):
+            return Response(
+                {"error": "Permission denied."},
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+        serializer = ConsultationSerializer(
+            consultation
+        )
+
+        return Response(serializer.data)
+
+    if request.method == "PUT":
+
+        if not api_has_permission(
+            request.user,
+            "hospital.change_consultation"
+        ):
+            return Response(
+                {"error": "Permission denied."},
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+        serializer = ConsultationSerializer(
+            consultation,
+            data=request.data
+        )
+
+        if serializer.is_valid():
+
+            serializer.save()
+
+            create_audit_log(
+                request.user,
+                "API UPDATE",
+                "Consultation",
+                consultation.id
+            )
+
+            return Response(
+                serializer.data
+            )
+
+        return Response(
+            serializer.errors,
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    if request.method == "DELETE":
+
+        if not api_has_permission(
+            request.user,
+            "hospital.delete_consultation"
+        ):
+            return Response(
+                {"error": "Permission denied."},
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+        consultation_id_value = consultation.id
+
+        consultation.delete()
+
+        create_audit_log(
+            request.user,
+            "API DELETE",
+            "Consultation",
+            consultation_id_value
+        )
+
+        return Response(
+            status=status.HTTP_204_NO_CONTENT
+        )
+
+
+
+# PRESCRIPTION API
+
+
+@api_view(["GET", "POST"])
+@permission_classes([IsAuthenticated])
+def prescription_api(request):
+
+    if request.method == "GET":
+
+        if not api_has_permission(
+            request.user,
+            "hospital.view_prescription"
+        ):
+            return Response(
+                {"error": "Permission denied."},
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+        prescriptions = Prescription.objects.select_related(
+            "patient",
+            "doctor"
+        ).all().order_by("id")
+
+        serializer = PrescriptionSerializer(
+            prescriptions,
+            many=True
+        )
+
+        return Response(serializer.data)
+
+    if request.method == "POST":
+
+        if not api_has_permission(
+            request.user,
+            "hospital.add_prescription"
+        ):
+            return Response(
+                {"error": "Permission denied."},
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+        serializer = PrescriptionSerializer(
+            data=request.data
+        )
+
+        if serializer.is_valid():
+
+            prescription = serializer.save()
+
+            create_audit_log(
+                request.user,
+                "API CREATE",
+                "Prescription",
+                prescription.id
+            )
+
+            return Response(
+                serializer.data,
+                status=status.HTTP_201_CREATED
+            )
+
+        return Response(
+            serializer.errors,
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+
+@api_view(["GET", "PUT", "DELETE"])
+@permission_classes([IsAuthenticated])
+def prescription_api_detail(
+    request,
+    prescription_id
+):
+
+    try:
+        prescription = Prescription.objects.get(
+            id=prescription_id
+        )
+
+    except Prescription.DoesNotExist:
+
+        return Response(
+            {"error": "Prescription not found."},
+            status=status.HTTP_404_NOT_FOUND
+        )
+
+    if request.method == "GET":
+
+        if not api_has_permission(
+            request.user,
+            "hospital.view_prescription"
+        ):
+            return Response(
+                {"error": "Permission denied."},
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+        serializer = PrescriptionSerializer(
+            prescription
+        )
+
+        return Response(serializer.data)
+
+    if request.method == "PUT":
+
+        if not api_has_permission(
+            request.user,
+            "hospital.change_prescription"
+        ):
+            return Response(
+                {"error": "Permission denied."},
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+        serializer = PrescriptionSerializer(
+            prescription,
+            data=request.data
+        )
+
+        if serializer.is_valid():
+
+            serializer.save()
+
+            create_audit_log(
+                request.user,
+                "API UPDATE",
+                "Prescription",
+                prescription.id
+            )
+
+            return Response(
+                serializer.data
+            )
+
+        return Response(
+            serializer.errors,
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    if request.method == "DELETE":
+
+        if not api_has_permission(
+            request.user,
+            "hospital.delete_prescription"
+        ):
+            return Response(
+                {"error": "Permission denied."},
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+        prescription_id_value = prescription.id
+
+        prescription.delete()
+
+        create_audit_log(
+            request.user,
+            "API DELETE",
+            "Prescription",
+            prescription_id_value
+        )
+
+        return Response(
+            status=status.HTTP_204_NO_CONTENT
+        )

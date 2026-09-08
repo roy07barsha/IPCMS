@@ -49,6 +49,15 @@
             background-color: #1565c0;
         }
 
+        .message {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+            padding: 12px 18px;
+            margin-bottom: 20px;
+            border-radius: 6px;
+            border: 1px solid #c8e6c9;
+        }
+
         /* Main content */
         .main {
             margin-left: 230px;
@@ -163,6 +172,24 @@
 
     </aside>
 
+{% if messages %}
+
+    {% for message in messages %}
+
+        <div style="
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            background: #e8f5e9;
+            color: #1b5e20;
+        ">
+            {{ message }}
+        </div>
+
+    {% endfor %}
+
+{% endif %}
+
 
     <div class="main">
 
@@ -170,12 +197,20 @@
             <h1>{% block header %}IPCMS Dashboard{% endblock %}</h1>
         </header>
 
-        <main class="content">
+    <main class="content">
 
-            {% block content %}
-            {% endblock %}
+        {% if messages %}
+             {% for message in messages %}
+                <div class="message">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
 
-        </main>
+        {% block content %}
+        {% endblock %}
+
+    </main>
 
     </div>
 
