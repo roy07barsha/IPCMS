@@ -29,12 +29,18 @@ SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
 DEBUG = os.getenv('DEBUG', 'True') == 'True'
 
 ALLOWED_HOSTS = [
-    '127.0.0.1', 'localhost',
+    '127.0.0.1',
+    'localhost',
 ]
+CSRF_TRUSTED_ORIGINS = []
 
-SECURE_SSL_REDIRECT = False
-SESSION_COOKIE_SECURE = False
-CSRF_COOKIE_SECURE = False
+
+SECURE_SSL_REDIRECT = 'False'
+
+SESSION_COOKIE_SECURE = 'False'
+
+CSRF_COOKIE_SECURE = 'False'
+
 SECURE_HSTS_SECONDS = 0
 #31536000
 
@@ -58,7 +64,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    
+
     'whitenoise.middleware.WhiteNoiseMiddleware',
 
     'django.contrib.sessions.middleware.SessionMiddleware',
