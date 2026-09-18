@@ -33,8 +33,9 @@ ALLOWED_HOSTS = os.getenv(
     '127.0.0.1,localhost'
 ).split(',')
 
-CSRF_TRUSTED_ORIGINS = []
-
+CSRF_TRUSTED_ORIGINS = [
+    'https://ipcms-production.up.railway.app',
+]
 
 SECURE_SSL_REDIRECT = False
 
