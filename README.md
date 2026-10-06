@@ -6,7 +6,7 @@ A web-based healthcare management system developed using Django to streamline pa
 
 </p>
 
-**[🌐 Live Demo]((https://ipcms-production.up.railway.app/accounts/login/?next=/dashboard/))** •
+**[🌐 Live Demo]([https://ipcms-production.up.railway.app/accounts/login/?next=/dashboard/])** •
 
 
 ---
